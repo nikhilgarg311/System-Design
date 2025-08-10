@@ -1,0 +1,92 @@
+Design a Leader Board
+
+Step1: Requirements Gathering
+
+    question to ask the interviewer:
+        (1)What is the purpose of the system.
+        (2)What is the expected Daily Active Users for writes.
+        (3)What will be the read write ratio
+        (4)Are users distributed globaly
+        (5)Does it has to be real time
+
+
+    Lets suppose the interviewer says
+        (1)Update the score and display the leaderboard
+        (2)Yes
+        (3)50 million DAU
+        (4)5: 1
+        (5)Yes
+
+    Functional Requirements
+        The client (player) can view the top 10 players on the leaderboard in real-time (absolute leaderboard)
+        The client can view a specific player’s rank and score
+        The client can view the surrounding ranked players to a particular player (relative leaderboard)
+        The client can receive score updates through push notifications
+        The leaderboard can be configured for global, regional, and friend circles
+        The client can view the historical game scores and historical leaderboards
+        The clients can update the leaderboard in a fully distributed manner across the globe
+        The leaderboard should support thousands of concurrent players
+    Non-Functional Requirements
+        High availability
+        Low latency
+        Scalability
+        Reliability
+        Minimal operational overhead
+
+
+Note: Since real time updates are required we will use web sockets
+
+Step2: Storage/Capacity Estimations
+
+    DAU writes = 50M
+    writes/sec = 50M/84600 approximately 600/sec
+    reads/sec = approximately 3000/sec
+
+    its a heavy write operation and we would want consistency in our database.
+
+    Step3: lets first decide what will our databases stored
+            Games Table
+            gameId
+            gameName
+            
+            Players Table
+            playerId
+            playerName
+            location
+            gameId
+            score
+            etc
+
+            
+            Friends
+            playerId
+            friendId
+            friendId
+            friendId
+
+
+            leaderboards
+            leaderboardId
+            gameId
+            playerIds
+            scores
+
+    we will use RDBMS like SQL
+
+    Now lets come back to step2
+    we have rps and wps
+    for one day we need storage of 32bytes * 50M= 1600MB approximately 1.6GB
+    storage for a year= 1.6* 365 = 600GB
+
+Step4: HLD    
+
+users------->webSockets---------->LoadBalancer-------------->Server------------>Services----------->Database
+                                                                                    |____________Cache
+Step5: APIs design
+
+    write into database
+    read from database
+    fetch leaderboard
+
+
+
